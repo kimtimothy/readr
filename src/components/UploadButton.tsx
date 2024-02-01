@@ -30,9 +30,12 @@ const UploadDropzone = () => {
   return (
     <Dropzone
       multiple={false}
-      onDrop={(acceptedFile) => {
+      onDrop={async (acceptedFile) => {
         setIsUploading(true);
         const progressInterval = startSimulatedProgress();
+
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+
         clearInterval(progressInterval);
         setUploadProgress(100);
       }}
