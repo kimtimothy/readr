@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
+import { ChevronDown, ChevronUp, Loader2, RotateCw } from 'lucide-react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
@@ -21,6 +21,7 @@ import {
 } from './ui/dropdown-menu';
 import { Search } from 'lucide-react';
 import SimpleBar from 'simplebar-react';
+import PdfFullscreen from './PdfFullscreen';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
@@ -40,6 +41,10 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
   const [numPages, setNumPages] = useState<number>();
   const [currPage, setCurrPage] = useState<number>(1);
   const [scale, setScale] = useState<number>(1);
+  const [rotation, setRotation] = useState<number>(0);
+  const [renderedScale, setRenderedScale] = useState<number | null>(null);
+
+  const isLoading = renderedScale !== scale;
 
   const CustomPageValidator = z.object({
     page: z
@@ -70,6 +75,7 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
             aria-label="previous page"
             onClick={() => {
               setCurrPage((prev) => (prev - 1 > 1 ? prev - 1 : 1));
+              setValue('page', String(currPage - 1));
             }}
             disabled={currPage <= 1}
           >
@@ -101,6 +107,7 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
               setCurrPage((prev) =>
                 prev + 1 > numPages! ? numPages! : prev + 1
               );
+              setValue('page', String(currPage + 1));
             }}
             disabled={numPages === undefined || currPage === numPages}
           >
@@ -130,6 +137,16 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          <Button
+            aria-label="rotate 90 degrees"
+            variant="ghost"
+            onClick={() => setRotation((prev) => prev + 90)}
+          >
+            <RotateCw className="h-4 w-4" />
+          </Button>
+
+          <PdfFullscreen fileUrl={url} />
         </div>
       </div>
 
@@ -153,10 +170,29 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
               file={url}
               className="max-h-full"
             >
+              {isLoading && renderedScale ? (
+                <Page
+                  width={width ? width : 1}
+                  pageNumber={currPage}
+                  scale={scale}
+                  rotate={rotation}
+                  key={'@' + renderedScale}
+                />
+              ) : null}
+
               <Page
                 width={width ? width : 1}
                 pageNumber={currPage}
                 scale={scale}
+                rotate={rotation}
+                key={'@' + scale}
+                className={cn(isLoading && 'hidden')}
+                loading={
+                  <div className="flex justify-center">
+                    <Loader2 className="h-6 w-6 animate-spin" />
+                  </div>
+                }
+                onRenderSuccess={() => setRenderedScale(scale)}
               />
             </Document>
           </div>
