@@ -41,6 +41,7 @@ model File {
   updatedAt    DateTime     @updatedAt
   User         User?        @relation(fields: [userId], references: [id])
   userId       String?
+  messages     Message[]
 }
 
 model Message {
@@ -51,4 +52,6 @@ model Message {
   isUserMessage Boolean  @default(false)
   User          User?    @relation(fields: [userId], references: [id])
   userId        String?
+  File          File?    @relation(fields: [fileId], references: [id])
+  fileId        String?
 }
