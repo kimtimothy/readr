@@ -1,5 +1,4 @@
-import { createContext } from 'react';
-import { useState } from 'react';
+import { useState , createContext } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useToast } from '../ui/use-toast';
 
@@ -43,8 +42,9 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
     },
   });
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setMessage(event.target.value);
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    console.log(e.target.value)
+    setMessage(e.target.value);
   };
   const addMessage = () => sendMessage({ message });
 

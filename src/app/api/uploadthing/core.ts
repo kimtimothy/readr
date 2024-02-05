@@ -31,7 +31,6 @@ export const ourFileRouter = {
       try {
         const response = await fetch(`https://utfs.io/f/${file.key}`);
         const blob = await response.blob();
-        console.log(response, '<--res')
         const loader = new PDFLoader(blob);
         const pageLevelDocs = await loader.load();
         const pagesAmt = pageLevelDocs.length;
@@ -57,7 +56,6 @@ export const ourFileRouter = {
           },
         })
       } catch (err) {
-        console.log(err)
         await db.file.update({
           where: {
             id: createdFile.id,
