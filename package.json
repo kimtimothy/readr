@@ -27,6 +27,7 @@
     "@trpc/react-query": "^11.0.0-next-beta.234",
     "@trpc/server": "^11.0.0-next-beta.234",
     "@uploadthing/react": "^6.2.2",
+    "ai": "^2.2.33",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "date-fns": "^3.3.1",

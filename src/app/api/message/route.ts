@@ -6,6 +6,7 @@ import { OpenAIEmbeddings } from '@langchain/openai';
 import { getPineconeClient } from '@/lib/pinecone';
 import { PineconeStore } from '@langchain/pinecone';
 import { openai } from '@/lib/openai';
+import { OpenAIStream, StreamingTextResponse } from 'ai';
 
 export const POST = async (req: NextRequest) => {
   const body = await req.json();
@@ -98,4 +99,19 @@ export const POST = async (req: NextRequest) => {
       },
     ],
   });
+
+  const stream = OpenAIStream(response, {
+    async onCompletion(completion) {
+      db.message.create({
+        data: {
+          text: completion,
+          isUserMessage: false,
+          userId,
+          fileId,
+        },
+      });
+    },
+  });
+
+  return new StreamingTextResponse(stream);
 };
