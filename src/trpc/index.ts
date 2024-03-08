@@ -4,7 +4,6 @@ import { TRPCError } from '@trpc/server';
 import { db } from '@/db';
 import { z } from 'zod';
 import { INFINITE_QUERY_LIMIT } from '@/config/infinite-query';
-import next from 'next';
 
 export const appRouter = router({
   authCallback: publicProcedure.query(async () => {
